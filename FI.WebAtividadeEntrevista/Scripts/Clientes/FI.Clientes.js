@@ -132,17 +132,55 @@ function beneficiarioJaSalvo(cpf) {
 function adicionarNaTabela() {
     $("#tabelaBeneficiarios tbody").empty();
 
-    listaBeneficiarios.forEach(function (beneficiario) {
+    listaBeneficiarios.forEach(function (beneficiario, index) {
         const newRow = $("<tr>").append(
             $("<td>").text(beneficiario.cpf),
             $("<td>").text(beneficiario.nome),
         );
         $("#tabelaBeneficiarios tbody").append(newRow);
+
+        adicionarBotaoAlterar(index);
+        adicionarBotaoExcluir(index);
     });
 }
 
-//function alterarBeneficiario() { }
+window.adicionarBotaoAlterar = function (index) {
+    const editButton = $('<button>', {
+        class: 'btn btn-primary btn-sm',
+        text: 'Alterar',
+        click: function () {
+            alterarBeneficiario(index);
+        }
+    });
+    const td = $('<td>').append(editButton);
+    $('#tabelaBeneficiarios tbody tr').eq(index).append(td);
+};
 
-//function excluirBeneficiario() { }
+window.adicionarBotaoExcluir = function (index) {
+    const deleteButton = $('<button>', {
+        class: 'btn btn-primary btn-sm',
+        text: 'Excluir',
+        click: function () {
+            excluirBeneficiario(index);
+        }
+    });
+    const td = $('<td>').append(deleteButton);
+    $('#tabelaBeneficiarios tbody tr').eq(index).append(td);
+};
+
+window.alterarBeneficiario = function (index) {
+    const beneficiario = listaBeneficiarios[index];
+    $("#benefCPF").val(beneficiario.cpf);
+    $("#benefNome").val(beneficiario.nome);
+
+    listaBeneficiarios.splice(index, 1);
+
+    adicionarNaTabela();
+};
+
+window.excluirBeneficiario = function (index) {
+    listaBeneficiarios.splice(index, 1);
+    adicionarNaTabela();
+};
 
 
