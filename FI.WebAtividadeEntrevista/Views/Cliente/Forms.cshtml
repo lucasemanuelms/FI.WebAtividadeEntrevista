@@ -84,8 +84,75 @@
                 <button type="submit" class="btn btn-sm btn-success">Salvar</button>
                 @Html.ActionLink("Voltar", "Index", "Cliente", new { }, new { @class = "btn btn-sm btn-danger" })
             </div>
+            <div class="pull-left">
+                <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modalBeneficiario">Beneficiários</button>
+            </div>
         </div>
     </div>
 
-
 </form>
+
+<!--Modal do beneficiário-->
+<div class="modal fade" id="modalBeneficiario" tabindex="-1" role="dialog" aria-labelledby="beneficiarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h4 class="modal-title" id="titleBenefModalLabel" style="margin: 0;">Beneficiários</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formBeneficiario">
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="CPF">CPF:</label>
+                                <input required="required" type="text" class="form-control" id="benefCPF" name="CPF" placeholder="Ex.: 010.011.111-00" maxlength="14">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="Nome">Nome:</label>
+                                <input required="required" type="text" class="form-control" id="benefNome" name="Nome" placeholder="Ex.: João" maxlength="50">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-sm btn-success" style="margin-top:24px;">Salvar</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <table class="table" id="tabelaBeneficiarios">
+                                <thead>
+                                    <tr>
+                                        <th>CPF</th>
+                                        <th>Nome</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-close" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,11 @@
-﻿
+﻿let listaBeneficiarios = [];
+
 $(document).ready(function () {
 
     $('#CPF').mask('000.000.000-00');
     $('#CEP').mask('00000-000');
     $('#Telefone').mask('(00)00000-0000');
+    $('#benefCPF').mask('000.000.000-00');
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
@@ -27,7 +29,8 @@ $(document).ready(function () {
                     "Cidade": $(this).find("#Cidade").val(),
                     "Logradouro": $(this).find("#Logradouro").val(),
                     "Telefone": $(this).find("#Telefone").val(),
-                    "CPF": $(this).find("#CPF").val()
+                    "CPF": $(this).find("#CPF").val(),
+                    "Beneficiarios": listaBeneficiarios
                 },
                 error:
                     function (r) {
@@ -45,6 +48,32 @@ $(document).ready(function () {
         }
     })
 })
+
+$("#formBeneficiario").on("submit", function (event) {
+    event.preventDefault();
+
+    const cpf = $("#benefCPF").val();
+    const nome = $("#benefNome").val();
+
+    if (!validarCPF(cpf)) {
+        ModalDialog("O CPF informado é inválido. Verifique!");
+    } else {
+        if (!beneficiarioJaSalvo(cpf)) {
+            let beneficiario = {
+                cpf,
+                nome
+            };
+            listaBeneficiarios.push(beneficiario);
+
+            adicionarNaTabela();
+
+            $("#benefCPF").val('');
+            $("#benefNome").val('');
+        } else {
+            ModalDialog("O beneficiario já está cadastrado!");
+        }
+    }
+});
 
 function ModalDialog(titulo, texto) {
     var random = Math.random().toString().replace('.', '');
@@ -95,3 +124,25 @@ function validarCPF(cpf) {
 
     return true;
 }
+
+function beneficiarioJaSalvo(cpf) {
+    return listaBeneficiarios.some(beneficiario => beneficiario.cpf === cpf);
+}
+
+function adicionarNaTabela() {
+    $("#tabelaBeneficiarios tbody").empty();
+
+    listaBeneficiarios.forEach(function (beneficiario) {
+        const newRow = $("<tr>").append(
+            $("<td>").text(beneficiario.cpf),
+            $("<td>").text(beneficiario.nome),
+        );
+        $("#tabelaBeneficiarios tbody").append(newRow);
+    });
+}
+
+//function alterarBeneficiario() { }
+
+//function excluirBeneficiario() { }
+
+
