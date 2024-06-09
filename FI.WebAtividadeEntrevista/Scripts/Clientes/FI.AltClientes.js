@@ -1,8 +1,11 @@
-﻿
+﻿var dataContainer = document.getElementById('data-container');
+var listaBeneficiarios = JSON.parse(dataContainer.getAttribute('data-items'));
+
 $(document).ready(function () {
     $('#CPF').mask('000.000.000-00');
     $('#CEP').mask('00000-000');
     $('#Telefone').mask('(00)00000-0000');
+    $('#benefCPF').mask('000.000.000-00');
 
     if (obj) {
         $('#formCadastro #Nome').val(obj.Nome);
@@ -19,6 +22,8 @@ $(document).ready(function () {
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
+
+        alert("Voltei pra k")
 
         let cpf = $(this).find("#CPF").val();
 
@@ -57,7 +62,23 @@ $(document).ready(function () {
             });
         }
     })
-    
+
+    $('#tabelaBeneficiarios').on('click', '.btn-alterar', function () {
+        var beneficiarioId = $(this).attr('value'); 
+        //alert('Botão Alterar clicado para o beneficiário com ID: ' + beneficiarioId);
+        // Adicione aqui o código para processar a alteração do beneficiário
+
+        alterarBeneficiario(beneficiarioId);
+    });
+
+    $('#tabelaBeneficiarios').on('click', '.btn-excluir', function () {
+        var beneficiarioId = $(this).val();
+        //alert('Botão Excluir clicado para o beneficiário com ID: ' + beneficiarioId);
+        // Adicione aqui o código para processar a alteração do beneficiário
+
+        excluirBeneficiario();
+    });
+
 })
 
 function ModalDialog(titulo, texto) {
@@ -109,3 +130,94 @@ function validarCPF(cpf) {
 
     return true;
 }
+
+function beneficiarioJaSalvo(cpf) {
+    return listaBeneficiarios.some(beneficiario => beneficiario.cpf === cpf);
+}
+
+function adicionarNaTabela() {
+    $("#tabelaBeneficiarios tbody").empty();
+
+    listaBeneficiarios.forEach(function (beneficiario, index) {
+        const newRow = $("<tr>").append(
+            $("<td>").text(beneficiario.cpf),
+            $("<td>").text(beneficiario.nome),
+        );
+        $("#tabelaBeneficiarios tbody").append(newRow);
+
+        adicionarBotaoAlterar(index);
+        adicionarBotaoExcluir(index);
+    });
+}
+
+window.adicionarBotaoAlterar = function (index) {
+    const editButton = $('<button>', {
+        class: 'btn btn-primary btn-sm',
+        text: 'Alterar',
+        click: function () {
+            alterarBeneficiario(index);
+        }
+    });
+    const td = $('<td>').append(editButton);
+    $('#tabelaBeneficiarios tbody tr').eq(index).append(td);
+};
+
+window.adicionarBotaoExcluir = function (index) {
+    const deleteButton = $('<button>', {
+        class: 'btn btn-primary btn-sm',
+        text: 'Excluir',
+        click: function () {
+            excluirBeneficiario(index);
+        }
+    });
+    const td = $('<td>').append(deleteButton);
+    $('#tabelaBeneficiarios tbody tr').eq(index).append(td);
+};
+
+function alterarBeneficiario(beneficiarioId) {
+    beneficiarioId = parseInt(beneficiarioId);
+
+    const beneficiario = listaBeneficiarios.find(beneficiario => beneficiario.Id === beneficiarioId);
+
+    $("#formBeneficiario #benefCPF").val(beneficiario.CPF);
+    $("#formBeneficiario #benefNome").val(beneficiario.Nome);
+
+    const index = listaBeneficiarios.indexOf(beneficiario);
+    if (index !== -1) {
+        listaBeneficiarios.splice(index, 1);
+    }
+
+    adicionarNaTabela();
+
+}
+
+function excluirBeneficiario(index) {
+    listaBeneficiarios.splice(index, 1);
+    adicionarNaTabela();
+}
+
+$("#formBeneficiario").on("submit", function (event) {
+    event.preventDefault();
+
+    const cpf = $("#benefCPF").val();
+    const nome = $("#benefNome").val();
+
+    if (!validarCPF(cpf)) {
+        ModalDialog("O CPF informado é inválido. Verifique!");
+    } else {
+        if (!beneficiarioJaSalvo(cpf)) {
+            let beneficiario = {
+                cpf,
+                nome
+            };
+            listaBeneficiarios.push(beneficiario);
+
+            adicionarNaTabela();
+
+            $("#benefCPF").val('');
+            $("#benefNome").val('');
+        } else {
+            ModalDialog("O beneficiario já está cadastrado!");
+        }
+    }
+});

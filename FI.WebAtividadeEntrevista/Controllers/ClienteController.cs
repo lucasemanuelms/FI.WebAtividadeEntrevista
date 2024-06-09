@@ -26,6 +26,7 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Incluir(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
+            BoBeneficiario boBenef = new BoBeneficiario();
             
             if (!this.ModelState.IsValid)
             {
@@ -55,6 +56,25 @@ namespace WebAtividadeEntrevista.Controllers
                         CPF = model.CPF
                     });
 
+                    if(model.Beneficiarios != null)
+                    {
+                        foreach (BeneficiarioModel beneficiario in model.Beneficiarios)
+                        {
+                            if (!boBenef.VerificarExistencia(beneficiario.CPF))
+                            {
+                                boBenef.Incluir(new Beneficiario()
+                                {
+                                    CPF = beneficiario.CPF,
+                                    Nome = beneficiario.Nome,
+                                    ClienteId = model.Id
+                                });
+                            }
+                            else
+                            {
+                                return Json($"O beneficiário já se encontra cadastrado!");
+                            }
+                        }
+                    }
 
                     return Json("Cadastro efetuado com sucesso");
                 }
@@ -108,6 +128,22 @@ namespace WebAtividadeEntrevista.Controllers
             Cliente cliente = bo.Consultar(id);
             Models.ClienteModel model = null;
 
+            List<BeneficiarioModel> beneficiarios = new List<BeneficiarioModel>();
+
+            if (cliente.Beneficiarios != null)
+            {
+                foreach (Beneficiario beneficiario in cliente.Beneficiarios)
+                {
+                    beneficiarios.Add(new BeneficiarioModel
+                    {
+                        Id = beneficiario.Id,
+                        ClienteId = beneficiario.ClienteId,
+                        CPF = beneficiario.CPF,
+                        Nome = beneficiario.Nome
+                    });
+                }
+            }
+
             if (cliente != null)
             {
                 model = new ClienteModel()
@@ -122,7 +158,8 @@ namespace WebAtividadeEntrevista.Controllers
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
                     Telefone = cliente.Telefone,
-                    CPF = cliente.CPF
+                    CPF = cliente.CPF,
+                    Beneficiarios = beneficiarios
                 };
 
             
