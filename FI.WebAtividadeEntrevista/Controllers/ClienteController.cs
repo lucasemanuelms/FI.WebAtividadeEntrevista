@@ -116,6 +116,8 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone,
                     CPF = model.CPF
                 });
+
+                //Lembrar de verificar se o beneficiário é para alterar ou excluir: fazer if else 
                                
                 return Json("Cadastro alterado com sucesso");
             }

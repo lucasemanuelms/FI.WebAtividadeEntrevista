@@ -23,8 +23,6 @@ $(document).ready(function () {
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
 
-        alert("Voltei pra k")
-
         let cpf = $(this).find("#CPF").val();
 
         if (!validarCPF(cpf)) {
@@ -63,18 +61,40 @@ $(document).ready(function () {
         }
     })
 
+    $("#formBeneficiario").on("submit", function (event) {
+        event.preventDefault();
+
+        const cpf = $("#benefCPF").val();
+        const nome = $("#benefNome").val();
+
+        if (!validarCPF(cpf)) {
+            ModalDialog("O CPF informado é inválido. Verifique!");
+        } else {
+            if (!beneficiarioJaSalvo(cpf)) {
+                let beneficiario = {
+                    cpf,
+                    nome
+                };
+                listaBeneficiarios.push(beneficiario);
+
+                adicionarNaTabela();
+
+                $("#benefCPF").val('');
+                $("#benefNome").val('');
+            } else {
+                ModalDialog("O beneficiario já está cadastrado!");
+            }
+        }
+    });
+
     $('#tabelaBeneficiarios').on('click', '.btn-alterar', function () {
         var beneficiarioId = $(this).attr('value'); 
-        //alert('Botão Alterar clicado para o beneficiário com ID: ' + beneficiarioId);
-        // Adicione aqui o código para processar a alteração do beneficiário
 
         alterarBeneficiario(beneficiarioId);
     });
 
     $('#tabelaBeneficiarios').on('click', '.btn-excluir', function () {
         var beneficiarioId = $(this).val();
-        //alert('Botão Excluir clicado para o beneficiário com ID: ' + beneficiarioId);
-        // Adicione aqui o código para processar a alteração do beneficiário
 
         excluirBeneficiario();
     });
@@ -195,29 +215,3 @@ function excluirBeneficiario(index) {
     listaBeneficiarios.splice(index, 1);
     adicionarNaTabela();
 }
-
-$("#formBeneficiario").on("submit", function (event) {
-    event.preventDefault();
-
-    const cpf = $("#benefCPF").val();
-    const nome = $("#benefNome").val();
-
-    if (!validarCPF(cpf)) {
-        ModalDialog("O CPF informado é inválido. Verifique!");
-    } else {
-        if (!beneficiarioJaSalvo(cpf)) {
-            let beneficiario = {
-                cpf,
-                nome
-            };
-            listaBeneficiarios.push(beneficiario);
-
-            adicionarNaTabela();
-
-            $("#benefCPF").val('');
-            $("#benefNome").val('');
-        } else {
-            ModalDialog("O beneficiario já está cadastrado!");
-        }
-    }
-});
