@@ -90,7 +90,8 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Alterar(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
-       
+            BoBeneficiario boBenef = new BoBeneficiario();
+
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -117,8 +118,36 @@ namespace WebAtividadeEntrevista.Controllers
                     CPF = model.CPF
                 });
 
-                //Lembrar de verificar se o beneficiário é para alterar ou excluir: fazer if else 
-                               
+                if (model.Beneficiarios != null)
+                {
+                    foreach (BeneficiarioModel beneficiario in model.Beneficiarios)
+                    {
+                        if (beneficiario.Oper == 0)
+                        {
+                            boBenef.Excluir(beneficiario.Id);
+                        }
+                        else if (beneficiario.Oper == 1)
+                        {
+                            boBenef.Alterar(new Beneficiario()
+                            {
+                                Id = beneficiario.Id,
+                                CPF = beneficiario.CPF,
+                                Nome = beneficiario.Nome,
+                                ClienteId = model.Id
+                            });
+                        }
+                        else if (beneficiario.Oper == 2)
+                        {
+                            boBenef.Incluir(new Beneficiario()
+                            {
+                                CPF = beneficiario.CPF,
+                                Nome = beneficiario.Nome,
+                                ClienteId = model.Id
+                            });
+                        }
+                    }
+                }
+                              
                 return Json("Cadastro alterado com sucesso");
             }
         }

@@ -25,5 +25,10 @@ namespace WebAtividadeEntrevista.Models
         /// ID do Cliente
         /// </summary>
         public long ClienteId { get; set; }
+
+        /// <summary>
+        /// ID da ação
+        /// </summary>
+        public int Oper { get; set; }
     }
 }
