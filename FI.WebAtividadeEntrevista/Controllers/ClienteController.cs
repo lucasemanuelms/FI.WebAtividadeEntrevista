@@ -136,7 +136,7 @@ namespace WebAtividadeEntrevista.Controllers
                                 ClienteId = model.Id
                             });
                         }
-                        else
+                        else if(beneficiario.Oper == 1 && beneficiario.Id == null)
                         {
                             boBenef.Incluir(new Beneficiario()
                             {

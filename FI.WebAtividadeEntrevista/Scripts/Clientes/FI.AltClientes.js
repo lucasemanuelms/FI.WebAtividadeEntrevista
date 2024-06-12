@@ -170,7 +170,7 @@ function adicionarNaTabela() {
     $("#tabelaBeneficiarios tbody").empty();
 
     listaBeneficiarios.forEach(function (beneficiario, index) {
-        if (beneficiario.Oper !== 0) {
+        if (beneficiario.Oper != 0) {
             const newRow = `<tr id="${beneficiario.Id}">
                 <td>${beneficiario.CPF}</td>
                 <td>${beneficiario.Nome}</td>

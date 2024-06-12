@@ -29,6 +29,6 @@ namespace WebAtividadeEntrevista.Models
         /// <summary>
         /// ID da ação
         /// </summary>
-        public int Oper { get; set; }
+        public int? Oper { get; set; }
     }
 }
