@@ -55,10 +55,9 @@ namespace FI.AtividadeEntrevista.DAL.Beneficiarios
 
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", beneficiario.CPF));
             parametros.Add(new System.Data.SqlClient.SqlParameter("Nome", beneficiario.Nome));
-            parametros.Add(new System.Data.SqlClient.SqlParameter("IdCliente", beneficiario.ClienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("ID", beneficiario.Id));
 
-            base.Executar("FI_SP_AltBeneficiario", parametros);
+            base.Executar("FI_SP_AltBenef", parametros);
         }
 
         internal bool VerificarExistencia(string CPF)

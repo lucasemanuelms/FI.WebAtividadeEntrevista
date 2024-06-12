@@ -42,7 +42,8 @@ $(document).ready(function () {
                     "Cidade": $(this).find("#Cidade").val(),
                     "Logradouro": $(this).find("#Logradouro").val(),
                     "Telefone": $(this).find("#Telefone").val(),
-                    "CPF": $(this).find("#CPF").val()
+                    "CPF": $(this).find("#CPF").val(),
+                    "Beneficiarios": listaBeneficiarios
                 },
                 error:
                     function (r) {
@@ -64,21 +65,31 @@ $(document).ready(function () {
     $("#formBeneficiario").on("submit", function (event) {
         event.preventDefault();
 
-        const cpf = $("#benefCPF").val();
-        const nome = $("#benefNome").val();
+        const Id = $("#benefId").val();
+        const CPF = $("#benefCPF").val();
+        const Nome = $("#benefNome").val();
 
-        if (!validarCPF(cpf)) {
+        if (!validarCPF(CPF)) {
             ModalDialog("O CPF informado é inválido. Verifique!");
         } else {
-            if (!beneficiarioJaSalvo(cpf)) {
+            if (!beneficiarioJaSalvo(CPF)) {
                 let beneficiario = {
-                    cpf,
-                    nome
+                    Id,
+                    CPF,
+                    Nome
                 };
+
+                if (beneficiario.Id == null) {
+                    beneficiario.Oper = 2;
+                } else {
+                    beneficiario.Oper = 1;
+                }
+
                 listaBeneficiarios.push(beneficiario);
 
                 adicionarNaTabela();
 
+                $("#benefId").val('');
                 $("#benefCPF").val('');
                 $("#benefNome").val('');
             } else {
@@ -88,15 +99,15 @@ $(document).ready(function () {
     });
 
     $('#tabelaBeneficiarios').on('click', '.btn-alterar', function () {
-        var beneficiarioId = $(this).attr('value'); 
+        var rowIndex = $(this).closest('tr').index();
 
-        alterarBeneficiario(beneficiarioId);
+        alterarBeneficiario(rowIndex);
     });
 
     $('#tabelaBeneficiarios').on('click', '.btn-excluir', function () {
-        var beneficiarioId = $(this).val();
+        var rowIndex = $(this).closest('tr').index();
 
-        excluirBeneficiario();
+        excluirBeneficiario(rowIndex);
     });
 
 })
@@ -152,21 +163,24 @@ function validarCPF(cpf) {
 }
 
 function beneficiarioJaSalvo(cpf) {
-    return listaBeneficiarios.some(beneficiario => beneficiario.cpf === cpf);
+    return listaBeneficiarios.some(beneficiario => beneficiario.CPF === cpf);
 }
 
 function adicionarNaTabela() {
     $("#tabelaBeneficiarios tbody").empty();
 
     listaBeneficiarios.forEach(function (beneficiario, index) {
-        const newRow = $("<tr>").append(
-            $("<td>").text(beneficiario.cpf),
-            $("<td>").text(beneficiario.nome),
-        );
-        $("#tabelaBeneficiarios tbody").append(newRow);
-
-        adicionarBotaoAlterar(index);
-        adicionarBotaoExcluir(index);
+        if (beneficiario.Oper !== 0) {
+            const newRow = `<tr id="${beneficiario.Id}">
+                <td>${beneficiario.CPF}</td>
+                <td>${beneficiario.Nome}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-primary btn-alterar" value="${beneficiario.Id}">Alterar</button>
+                    <button type="button" class="btn btn-sm btn-primary btn-excluir" value="${beneficiario.Id}">Excluir</button>
+                </td>
+            </tr>`;
+            $("#tabelaBeneficiarios tbody").append(newRow);
+        }
     });
 }
 
@@ -194,24 +208,34 @@ window.adicionarBotaoExcluir = function (index) {
     $('#tabelaBeneficiarios tbody tr').eq(index).append(td);
 };
 
-function alterarBeneficiario(beneficiarioId) {
-    beneficiarioId = parseInt(beneficiarioId);
+function alterarBeneficiario(index) {
 
-    const beneficiario = listaBeneficiarios.find(beneficiario => beneficiario.Id === beneficiarioId);
+    const beneficiario = listaBeneficiarios[index];
 
-    $("#formBeneficiario #benefCPF").val(beneficiario.CPF);
-    $("#formBeneficiario #benefNome").val(beneficiario.Nome);
+    console.log(beneficiario);
 
-    const index = listaBeneficiarios.indexOf(beneficiario);
-    if (index !== -1) {
-        listaBeneficiarios.splice(index, 1);
-    }
+    $("#benefId").val(beneficiario.Id);
+    $("#benefCPF").val(beneficiario.CPF);
+    $("#benefNome").val(beneficiario.Nome);
+
+    beneficiario.Oper = 1;
+
+    listaBeneficiarios.splice(index, 1);
 
     adicionarNaTabela();
-
 }
 
 function excluirBeneficiario(index) {
-    listaBeneficiarios.splice(index, 1);
-    adicionarNaTabela();
+    const beneficiario = listaBeneficiarios[index];
+
+    if (beneficiario.Id == null) {
+        listaBeneficiarios.splice(index, 1);
+
+        adicionarNaTabela();
+    } else {
+
+        beneficiario.Oper = 0;
+
+        adicionarNaTabela();
+    }
 }

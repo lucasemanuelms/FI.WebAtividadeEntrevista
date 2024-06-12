@@ -124,19 +124,19 @@ namespace WebAtividadeEntrevista.Controllers
                     {
                         if (beneficiario.Oper == 0)
                         {
-                            boBenef.Excluir(beneficiario.Id);
+                            boBenef.Excluir((long)beneficiario.Id);
                         }
-                        else if (beneficiario.Oper == 1)
+                        else if (beneficiario.Oper == 1 && beneficiario.Id != null)
                         {
                             boBenef.Alterar(new Beneficiario()
                             {
-                                Id = beneficiario.Id,
+                                Id = (long)beneficiario.Id,
                                 CPF = beneficiario.CPF,
                                 Nome = beneficiario.Nome,
                                 ClienteId = model.Id
                             });
                         }
-                        else if (beneficiario.Oper == 2)
+                        else
                         {
                             boBenef.Incluir(new Beneficiario()
                             {
@@ -192,8 +192,6 @@ namespace WebAtividadeEntrevista.Controllers
                     CPF = cliente.CPF,
                     Beneficiarios = beneficiarios
                 };
-
-            
             }
 
             return View(model);
